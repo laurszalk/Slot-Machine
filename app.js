@@ -32,7 +32,7 @@ function deposit() {
   while (true) {
     const depositAmount = prompt("Enter a deposit amount: "); // returns a string
     const numDepositAmount = parseInt(depositAmount); //converts string to num
-    //validation for user input
+    // validation for user input
     if (isNaN(numDepositAmount) || numDepositAmount <= 0) {
       console.log("Invalid amount, try again.");
     } else {
@@ -78,15 +78,17 @@ function spin() {
       symbols.push(symbol);
     }
   }
-  // array of columns for the reels
-  const reels = [[], [], []];
+  // set columns to empty array so we can loop thru it
+  const reels = [];
   for (let i = 0; i < COLS; i++) {
+    reels.push([]); // push an array which represents each column
     const reelSymbols = [...symbols]; // available symbols for each reel copied into an array
     for (let j = 0; j < ROWS; j++) {
+        // randomly generate one of the symbols
       const randomIndex = Math.floor(Math.random() * reelSymbols.length);
       const selectedSymbol = reelSymbols[randomIndex];
       reels[i].push(selectedSymbol);
-      //remove symbol so we can't select it again
+      // remove symbol so we can't select it again
       reelSymbols.splice(randomIndex, 1);
     }
   }
