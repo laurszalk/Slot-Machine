@@ -9,6 +9,24 @@
 // require our package to get user input
 const prompt = require("prompt-sync")();
 
+// define our variables for reels (cols and rows) and symbols
+const ROWS = 3;
+const COLS = 3;
+
+const SYMBOLS = {
+  A: 2,
+  B: 4,
+  C: 6,
+  D: 8,
+};
+
+const VALUES = {
+  A: 5,
+  B: 4,
+  C: 3,
+  D: 2,
+};
+
 // 1. deposit some money
 function deposit() {
   while (true) {
@@ -38,7 +56,6 @@ function getNumberofLines() {
 }
 
 // 3. collect bet based on the balance they deposited
-
 function getBet(balance, lines) {
   while (true) {
     const bet = prompt("Enter the bet per line: ");
@@ -51,6 +68,33 @@ function getBet(balance, lines) {
     }
   }
 }
+
+// 4. spin the slot machine
+function spin() {
+  // first loop through all the possible symbols
+  const symbols = [];
+  for (const [symbol, count] of Object.entries(SYMBOLS)) {
+    for (let i = 0; i < count; i++) {
+      symbols.push(symbol);
+    }
+  }
+  // array of columns for the reels
+  const reels = [[], [], []];
+  for (let i = 0; i < COLS; i++) {
+    const reelSymbols = [...symbols]; // available symbols for each reel copied into an array
+    for (let j = 0; j < ROWS; j++) {
+      const randomIndex = Math.floor(Math.random() * reelSymbols.length);
+      const selectedSymbol = reelSymbols[randomIndex];
+      reels[i].push(selectedSymbol);
+      //remove symbol so we can't select it again
+      reelSymbols.splice(randomIndex, 1);
+    }
+  }
+  return reels;
+}
+
+const reels = spin();
+console.log(reels);
 
 let balance = deposit();
 const numberOfLines = getNumberofLines();
