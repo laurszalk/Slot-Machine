@@ -3,7 +3,7 @@
 // 3. collect a bet amount
 // 4. spin the slot machine
 // 5. check if the user won
-// 6. give the user their money or take their bet
+// 6. give the user their money
 // 7. play again
 
 // require our package to get user input
@@ -42,18 +42,19 @@ function deposit() {
 }
 
 // 2. determine number of lines to bet on
-function getNumberofLines() {
+// had to write this as an arrow function for it to work
+const getNumberOfLines = () => {
   while (true) {
     const lines = prompt("Enter the number of lines to bet on (1-3): ");
-    const numberOfLines = parseInt(lines);
+    const numberOfLines = parseFloat(lines);
 
     if (isNaN(numberOfLines) || numberOfLines <= 0 || numberOfLines > 3) {
-      console.log("Invalid number, try again.");
+      console.log("Invalid number of lines, try again.");
     } else {
       return numberOfLines;
     }
   }
-}
+};
 
 // 3. collect bet based on the balance they deposited
 function getBet(balance, lines) {
@@ -64,7 +65,7 @@ function getBet(balance, lines) {
     if (isNaN(numberBet) || numberBet <= 0 || numberBet > balance / lines) {
       console.log("Invalid bet, try again.");
     } else {
-      return numberBet;
+      return numberBet; // bet is per line
     }
   }
 }
@@ -108,7 +109,7 @@ function transpose(reels) {
   return rows;
 }
 
-// print the rows for the user 
+// print the rows for the user
 function printRows(rows) {
   for (const row of rows) {
     let rowString = "";
@@ -122,9 +123,55 @@ function printRows(rows) {
   }
 }
 
-let balance = deposit();
-const numberOfLines = getNumberofLines();
-const bet = getBet(balance, numberOfLines);
-const reels = spin();
-const rows = transpose(reels);
-printRows(rows);
+// 5. check if the user won
+function getWinnings(rows, bet, lines) {
+  let winnings = 0;
+
+  // check if the symbols are all the same (won)
+  for (let row = 0; row < lines; row++) {
+    const symbols = rows[row];
+    let allSame = true;
+    // check if the symbols are not all the same (lost)
+    for (const symbol of symbols) {
+      if (symbol != symbols[0]) {
+        allSame = false;
+        break;
+      }
+    }
+    // calculate the winnings if they won
+    if (allSame) {
+      winnings += bet * VALUES[symbols[0]];
+    }
+  }
+  return winnings;
+}
+
+// 7. play again
+function game() {
+  let balance = deposit();
+
+  while (true) {
+    console.log("You have a balance of $" + balance);
+    const numberOfLines = getNumberOfLines;
+    const bet = getBet(balance, numberOfLines);
+    balance -= bet * numberOfLines;
+    const reels = spin();
+    const rows = transpose(reels);
+    printRows(rows);
+    const winnings = getWinnings(rows, bet, numberOfLines);
+    balance += winnings;
+    console.log("You won $" + winnings.toString());
+
+    if (balance === 0) {
+      console.log("You ran out of money!");
+      break;
+    }
+
+    // ask the user if they want to keep playing or else stop the game
+    const playAgain = prompt("Do you want to play again (y/n)? ");
+
+    if (playAgain != "y") break;
+  }
+}
+
+game();
